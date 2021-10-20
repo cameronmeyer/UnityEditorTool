@@ -213,10 +213,37 @@ public class ProjectileCreatorWindow : EditorWindow
         visuals.transform.parent = projectile.transform;
 
         // Particles
+        if (ProjectileInfo.containsParticles)
+        {
+            visuals.AddComponent<ParticleSystem>();
+
+            ParticleSystem.ShapeModule v = visuals.GetComponent<ParticleSystem>().shape;
+
+            v.rotation = new Vector3(180, 0, 0);
+
+            projectile.GetComponent<ProjectileController>()._projectileParticles = visuals.GetComponent<ParticleSystem>();
+        }
 
         // Trail
 
         // Impact Particles
+        if (ProjectileInfo.containsImpactParticles)
+        {
+            GameObject impactParticles = new GameObject();
+            impactParticles.AddComponent<ParticleSystem>();
+            impactParticles.name = "Impact Particles";
+            impactParticles.transform.parent = visuals.transform;
+
+            ParticleSystem.MainModule ip = impactParticles.GetComponent<ParticleSystem>().main;
+
+            ip.playOnAwake = false;
+            ip.duration = 1f;
+            ip.loop = false;
+            ip.startLifetime = 0.5f;
+            //impactParticles.GetComponent<ParticleSystemRenderer>().material = Resources.GetBuiltinResource<Material>("Default-Particle");
+
+            projectile.GetComponent<ProjectileController>()._impactParticles = impactParticles.GetComponent<ParticleSystem>();
+        }
 
         // Speed
         // Set speed value in controller script component

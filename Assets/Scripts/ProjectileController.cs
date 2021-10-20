@@ -8,8 +8,9 @@ public class ProjectileController : MonoBehaviour
     [SerializeField] private float _speed;
     //private float _damage;
 
+    [SerializeField] public ParticleSystem _projectileParticles;
     [SerializeField] AudioClip _projectileFire;
-    [SerializeField] ParticleSystem _impactParticles;
+    [SerializeField] public ParticleSystem _impactParticles;
     [SerializeField] AudioClip _impactSound;
 
     public float Speed
