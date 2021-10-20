@@ -173,6 +173,8 @@ public class ProjectileCreatorWindow : EditorWindow
     {
         // Create projectile object with required components
         GameObject projectile = new GameObject();
+        GameObject visuals = null;
+
         projectile.AddComponent<Rigidbody>();
         projectile.AddComponent<ProjectileController>();
 
@@ -180,15 +182,35 @@ public class ProjectileCreatorWindow : EditorWindow
         projectile.name = ProjectileInfo.name;
 
         // Model
-        switch(ProjectileInfo.model)
+        switch (ProjectileInfo.model)
         {
             case ProjectileData.projectileModel.Sphere:
+                visuals = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                DestroyImmediate(visuals.GetComponent<SphereCollider>());
+                projectile.AddComponent<SphereCollider>();
+                break;
+            case ProjectileData.projectileModel.Capsule:
+                visuals = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+                visuals.transform.rotation = Quaternion.Euler(90, 0, 0); // Align with Z-Axis (looks more like a bullet with a rotated mesh)
+                DestroyImmediate(visuals.GetComponent<CapsuleCollider>());
+                projectile.AddComponent<CapsuleCollider>();
+                projectile.GetComponent<CapsuleCollider>().direction = 2; // Align with Z-Axis (align collider with mesh rotation)
                 break;
             case ProjectileData.projectileModel.Cube:
+                visuals = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                DestroyImmediate(visuals.GetComponent<BoxCollider>());
+                projectile.AddComponent<SphereCollider>();
                 break;
             case ProjectileData.projectileModel.None:
+                visuals = new GameObject();
+                visuals.AddComponent<MeshFilter>();
+                visuals.AddComponent<MeshRenderer>();
+                projectile.AddComponent<SphereCollider>();
                 break;
         }
+
+        visuals.name = "Visuals";
+        visuals.transform.parent = projectile.transform;
 
         // Particles
 
@@ -199,7 +221,6 @@ public class ProjectileCreatorWindow : EditorWindow
         // Speed
         // Set speed value in controller script component
         projectile.GetComponent<ProjectileController>().Speed = ProjectileInfo.speed;
-        Debug.Log("ProjectileInfo Speed: " + ProjectileInfo.speed + "  Projectile Controller Speed: " + projectile.GetComponent<ProjectileController>().Speed);
 
         // Damage?
         // Set damage value in controller script component

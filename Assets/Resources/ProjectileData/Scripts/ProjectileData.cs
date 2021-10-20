@@ -8,6 +8,7 @@ public class ProjectileData : ScriptableObject
     public enum projectileModel
     {
         Sphere,
+        Capsule,
         Cube,
         None
     }
