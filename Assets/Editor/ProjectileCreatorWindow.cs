@@ -163,7 +163,6 @@ public class ProjectileCreatorWindow : EditorWindow
         AssetDatabase.GenerateUniqueAssetPath(prefabPath);
         GameObject projectile = ProjectileBuilder();
         PrefabUtility.SaveAsPrefabAssetAndConnect(projectile, prefabPath, InteractionMode.UserAction);
-        //DestroyImmediate(projectile);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -172,8 +171,8 @@ public class ProjectileCreatorWindow : EditorWindow
 
     GameObject ProjectileBuilder()
     {
+        // Create projectile object with required components
         GameObject projectile = new GameObject();
-        // Add controller script component thing
         projectile.AddComponent<Rigidbody>();
         projectile.AddComponent<ProjectileController>();
 
@@ -200,6 +199,7 @@ public class ProjectileCreatorWindow : EditorWindow
         // Speed
         // Set speed value in controller script component
         projectile.GetComponent<ProjectileController>().Speed = ProjectileInfo.speed;
+        Debug.Log("ProjectileInfo Speed: " + ProjectileInfo.speed + "  Projectile Controller Speed: " + projectile.GetComponent<ProjectileController>().Speed);
 
         // Damage?
         // Set damage value in controller script component
