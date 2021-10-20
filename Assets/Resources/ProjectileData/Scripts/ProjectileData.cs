@@ -14,8 +14,6 @@ public class ProjectileData : ScriptableObject
 
     public string name;
     public projectileModel model;
-    //public MageWpnType wpnType;
-    public GameObject prefab;
     public bool containsParticles;
     public bool containsTrail;
     public bool containsImpactParticles;

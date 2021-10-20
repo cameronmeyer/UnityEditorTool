@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Types;
 
 public class ProjectileCreatorWindow : EditorWindow
 {
@@ -162,18 +161,49 @@ public class ProjectileCreatorWindow : EditorWindow
 
         prefabPath += ProjectileInfo.name + ".prefab";
         AssetDatabase.GenerateUniqueAssetPath(prefabPath);
-        GameObject go = new GameObject();
-        PrefabUtility.SaveAsPrefabAssetAndConnect(go, prefabPath, InteractionMode.UserAction);
+        GameObject projectile = ProjectileBuilder();
+        PrefabUtility.SaveAsPrefabAssetAndConnect(projectile, prefabPath, InteractionMode.UserAction);
+        //DestroyImmediate(projectile);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
+        DestroyImmediate(projectile);
+    }
 
-        /*GameObject magePrefab = (GameObject)AssetDatabase.LoadAssetAtPath(newPrefabPath, typeof(GameObject));
-        if (!magePrefab.GetComponent<Mage>())
+    GameObject ProjectileBuilder()
+    {
+        GameObject projectile = new GameObject();
+        // Add controller script component thing
+        projectile.AddComponent<Rigidbody>();
+        projectile.AddComponent<ProjectileController>();
+
+        // Name
+        projectile.name = ProjectileInfo.name;
+
+        // Model
+        switch(ProjectileInfo.model)
         {
-            magePrefab.AddComponent(typeof(Mage));
+            case ProjectileData.projectileModel.Sphere:
+                break;
+            case ProjectileData.projectileModel.Cube:
+                break;
+            case ProjectileData.projectileModel.None:
+                break;
         }
 
-        magePrefab.GetComponent<Projectile>().projectileData = ProjectileCreatorWindow.ProjectileInfo;*/
+        // Particles
+
+        // Trail
+
+        // Impact Particles
+
+        // Speed
+        // Set speed value in controller script component
+        projectile.GetComponent<ProjectileController>().Speed = ProjectileInfo.speed;
+
+        // Damage?
+        // Set damage value in controller script component
+
+        return projectile;
     }
 }
