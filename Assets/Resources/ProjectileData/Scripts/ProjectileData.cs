@@ -16,7 +16,10 @@ public class ProjectileData : ScriptableObject
     public string name;
     public projectileModel model;
     public bool containsParticles;
+    public Material particleMaterial;
     public bool containsTrail;
+    public Material trailMaterial;
     public bool containsImpactParticles;
+    public Material impactParticleMaterial;
     public float speed;
 }

@@ -61,7 +61,6 @@ public class ProjectileCreatorWindow : EditorWindow
         DrawProjectileSettings();
     }
 
-    // Defines Rect values and paints textures based on Rects
     void DrawLayouts()
     {
         // Always draw header in the top left of the window
@@ -106,16 +105,20 @@ public class ProjectileCreatorWindow : EditorWindow
         projectileData.model = (ProjectileData.projectileModel) EditorGUILayout.EnumPopup(projectileData.model);
         EditorGUILayout.EndHorizontal();
 
-        /*EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Prefab");
-        projectileData.prefab = (GameObject)EditorGUILayout.ObjectField(projectileData.prefab, typeof(GameObject), false);
-        EditorGUILayout.EndHorizontal();*/
-
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Add Particles?");
         GUILayout.FlexibleSpace();
         projectileData.containsParticles = EditorGUILayout.Toggle(" ", projectileData.containsParticles);
         EditorGUILayout.EndHorizontal();
+
+        if (projectileData.containsParticles)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Particle Material");
+            GUILayout.FlexibleSpace();
+            projectileData.particleMaterial = (Material)EditorGUILayout.ObjectField(projectileData.particleMaterial, typeof(Material), false);
+            EditorGUILayout.EndHorizontal();
+        }
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Add Trail?");
@@ -123,11 +126,29 @@ public class ProjectileCreatorWindow : EditorWindow
         projectileData.containsTrail = EditorGUILayout.Toggle(" ", projectileData.containsTrail);
         EditorGUILayout.EndHorizontal();
 
+        if (projectileData.containsTrail)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Trail Material");
+            GUILayout.FlexibleSpace();
+            projectileData.trailMaterial = (Material)EditorGUILayout.ObjectField(projectileData.trailMaterial, typeof(Material), false);
+            EditorGUILayout.EndHorizontal();
+        }
+
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Add Impact Particles?");
         GUILayout.FlexibleSpace();
         projectileData.containsImpactParticles = EditorGUILayout.Toggle(" ", projectileData.containsImpactParticles);
         EditorGUILayout.EndHorizontal();
+
+        if (projectileData.containsImpactParticles)
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("Impact Particle Material");
+            GUILayout.FlexibleSpace();
+            projectileData.impactParticleMaterial = (Material)EditorGUILayout.ObjectField(projectileData.impactParticleMaterial, typeof(Material), false);
+            EditorGUILayout.EndHorizontal();
+        }
 
         EditorGUILayout.BeginHorizontal();
         GUILayout.Label("Projectile Speed");
@@ -138,6 +159,14 @@ public class ProjectileCreatorWindow : EditorWindow
         if (projectileData.name == null || projectileData.name.Length < 1)
         {
             EditorGUILayout.HelpBox("This projectile needs a [Name] before it can be created.", MessageType.Warning);
+        }
+        else if (projectileData.containsParticles && projectileData.particleMaterial == null)
+        {
+            EditorGUILayout.HelpBox("This projectile needs a [Particle Material] before it can be created.", MessageType.Warning);
+        }
+        else if (projectileData.containsImpactParticles && projectileData.impactParticleMaterial == null)
+        {
+            EditorGUILayout.HelpBox("This projectile needs a [Impact Particle Material] before it can be created.", MessageType.Warning);
         }
         // defines a button and what code will execute if clicked
         else if (GUILayout.Button("Create!", GUILayout.Height(40)))
@@ -217,14 +246,25 @@ public class ProjectileCreatorWindow : EditorWindow
         {
             visuals.AddComponent<ParticleSystem>();
 
-            ParticleSystem.ShapeModule v = visuals.GetComponent<ParticleSystem>().shape;
+            ParticleSystem.ShapeModule sm = visuals.GetComponent<ParticleSystem>().shape;
+            sm.rotation = new Vector3(180, 0, 0);
 
-            v.rotation = new Vector3(180, 0, 0);
+            ParticleSystem.MainModule mm = visuals.GetComponent<ParticleSystem>().main;
+            mm.simulationSpace = ParticleSystemSimulationSpace.World;
 
+            visuals.GetComponent<ParticleSystemRenderer>().material = projectileData.particleMaterial;
             projectile.GetComponent<ProjectileController>()._projectileParticles = visuals.GetComponent<ParticleSystem>();
         }
 
         // Trail
+        if (ProjectileInfo.containsTrail)
+        {
+            visuals.AddComponent<TrailRenderer>();
+
+            TrailRenderer tr = visuals.GetComponent<TrailRenderer>();
+            tr.material = projectileData.trailMaterial;
+            tr.startWidth = 0.5f;
+        }
 
         // Impact Particles
         if (ProjectileInfo.containsImpactParticles)
@@ -234,23 +274,19 @@ public class ProjectileCreatorWindow : EditorWindow
             impactParticles.name = "Impact Particles";
             impactParticles.transform.parent = visuals.transform;
 
-            ParticleSystem.MainModule ip = impactParticles.GetComponent<ParticleSystem>().main;
+            ParticleSystem.MainModule mm = impactParticles.GetComponent<ParticleSystem>().main;
+            mm.playOnAwake = false;
+            mm.duration = 1f;
+            mm.loop = false;
+            mm.startLifetime = 0.5f;
 
-            ip.playOnAwake = false;
-            ip.duration = 1f;
-            ip.loop = false;
-            ip.startLifetime = 0.5f;
-            //impactParticles.GetComponent<ParticleSystemRenderer>().material = Resources.GetBuiltinResource<Material>("Default-Particle");
-
+            impactParticles.GetComponent<ParticleSystemRenderer>().material = projectileData.impactParticleMaterial;
             projectile.GetComponent<ProjectileController>()._impactParticles = impactParticles.GetComponent<ParticleSystem>();
         }
 
         // Speed
         // Set speed value in controller script component
         projectile.GetComponent<ProjectileController>().Speed = ProjectileInfo.speed;
-
-        // Damage?
-        // Set damage value in controller script component
 
         return projectile;
     }
