@@ -6,23 +6,26 @@ using UnityEditor;
 public class ProjectileCreatorWindow : EditorWindow
 {
     Texture2D headerSectionTexture;
-    Texture2D mageSectionTexture;
+    Texture2D projectileSectionTexture;
 
     Color headerSectionColor = new Color(13f / 255f, 25f / 255f, 35f / 255f, 1f);
     Color projectileSectionColor = new Color(34f / 255f, 62f / 255f, 86f / 255f, 1f);
 
     Rect headerSection;
-    Rect mageSection;
+    Rect projectileSection;
+
+    GUISkin skin;
 
     static ProjectileData projectileData;
 
     public static ProjectileData ProjectileInfo { get { return projectileData; } }
 
-    [MenuItem("Window/Projectile Creator")]
+    [MenuItem("Window/Projectile Factory")]
     static void OpenWindow()
     {
         ProjectileCreatorWindow window = (ProjectileCreatorWindow) GetWindow(typeof(ProjectileCreatorWindow));
         window.minSize = new Vector2(300, 300);
+        window.titleContent.text = "Projectile Factory";
         window.Show();
     }
 
@@ -36,6 +39,7 @@ public class ProjectileCreatorWindow : EditorWindow
     {
         InitTextures();
         InitData();
+        skin = Resources.Load<GUISkin>("GUISkin/ProjectileFactorySkin");
     }
 
     public static void InitData()
@@ -49,9 +53,9 @@ public class ProjectileCreatorWindow : EditorWindow
         headerSectionTexture.SetPixel(0, 0, headerSectionColor);
         headerSectionTexture.Apply();
 
-        mageSectionTexture = new Texture2D(1, 1);
-        mageSectionTexture.SetPixel(0, 0, projectileSectionColor);
-        mageSectionTexture.Apply();
+        projectileSectionTexture = new Texture2D(1, 1);
+        projectileSectionTexture.SetPixel(0, 0, projectileSectionColor);
+        projectileSectionTexture.Apply();
     }
 
     private void OnGUI()
@@ -69,44 +73,44 @@ public class ProjectileCreatorWindow : EditorWindow
         headerSection.width = Screen.width;
         headerSection.height = 50;
 
-        mageSection.x = 0;
-        mageSection.y = 50;
-        mageSection.width = Screen.width;
-        mageSection.height = Screen.height - 50;
+        projectileSection.x = 0;
+        projectileSection.y = 50;
+        projectileSection.width = Screen.width;
+        projectileSection.height = Screen.height - 50;
 
         GUI.DrawTexture(headerSection, headerSectionTexture);
-        GUI.DrawTexture(mageSection, mageSectionTexture);
+        GUI.DrawTexture(projectileSection, projectileSectionTexture);
     }
 
     void DrawHeader()
     {
         GUILayout.BeginArea(headerSection);
 
-        GUILayout.Label("Projectile Creator");
+        GUILayout.Label("Projectile Factory", skin.GetStyle("Header1"));
 
         GUILayout.EndArea();
     }
 
     void DrawProjectileSettings()
     {
-        GUILayout.BeginArea(mageSection);
+        GUILayout.BeginArea(projectileSection);
 
-        GUILayout.Label("Projectile");
+        GUILayout.Label("Projectile", skin.GetStyle("Header2"));
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Name");
+        GUILayout.Label("Name", skin.GetStyle("Body"));
         GUILayout.FlexibleSpace();
         projectileData.name = EditorGUILayout.TextField(projectileData.name);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Projectile Model");
+        GUILayout.Label("Projectile Model", skin.GetStyle("Body"));
         GUILayout.FlexibleSpace();
         projectileData.model = (ProjectileData.projectileModel) EditorGUILayout.EnumPopup(projectileData.model);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Add Particles?");
+        GUILayout.Label("Add Particles?", skin.GetStyle("Body"));
         GUILayout.FlexibleSpace();
         projectileData.containsParticles = EditorGUILayout.Toggle(" ", projectileData.containsParticles);
         EditorGUILayout.EndHorizontal();
@@ -114,14 +118,14 @@ public class ProjectileCreatorWindow : EditorWindow
         if (projectileData.containsParticles)
         {
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Particle Material");
+            GUILayout.Label("Particle Material", skin.GetStyle("Body"));
             GUILayout.FlexibleSpace();
             projectileData.particleMaterial = (Material)EditorGUILayout.ObjectField(projectileData.particleMaterial, typeof(Material), false);
             EditorGUILayout.EndHorizontal();
         }
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Add Trail?");
+        GUILayout.Label("Add Trail?", skin.GetStyle("Body"));
         GUILayout.FlexibleSpace();
         projectileData.containsTrail = EditorGUILayout.Toggle(" ", projectileData.containsTrail);
         EditorGUILayout.EndHorizontal();
@@ -129,14 +133,14 @@ public class ProjectileCreatorWindow : EditorWindow
         if (projectileData.containsTrail)
         {
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Trail Material");
+            GUILayout.Label("Trail Material", skin.GetStyle("Body"));
             GUILayout.FlexibleSpace();
             projectileData.trailMaterial = (Material)EditorGUILayout.ObjectField(projectileData.trailMaterial, typeof(Material), false);
             EditorGUILayout.EndHorizontal();
         }
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Add Impact Particles?");
+        GUILayout.Label("Add Impact Particles?", skin.GetStyle("Body"));
         GUILayout.FlexibleSpace();
         projectileData.containsImpactParticles = EditorGUILayout.Toggle(" ", projectileData.containsImpactParticles);
         EditorGUILayout.EndHorizontal();
@@ -144,14 +148,14 @@ public class ProjectileCreatorWindow : EditorWindow
         if (projectileData.containsImpactParticles)
         {
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("Impact Particle Material");
+            GUILayout.Label("Impact Particle Material", skin.GetStyle("Body"));
             GUILayout.FlexibleSpace();
             projectileData.impactParticleMaterial = (Material)EditorGUILayout.ObjectField(projectileData.impactParticleMaterial, typeof(Material), false);
             EditorGUILayout.EndHorizontal();
         }
 
         EditorGUILayout.BeginHorizontal();
-        GUILayout.Label("Projectile Speed");
+        GUILayout.Label("Projectile Speed", skin.GetStyle("Body"));
         GUILayout.FlexibleSpace();
         projectileData.speed = EditorGUILayout.FloatField(projectileData.speed);
         EditorGUILayout.EndHorizontal();
@@ -169,7 +173,7 @@ public class ProjectileCreatorWindow : EditorWindow
             EditorGUILayout.HelpBox("This projectile needs a [Impact Particle Material] before it can be created.", MessageType.Warning);
         }
         // defines a button and what code will execute if clicked
-        else if (GUILayout.Button("Create!", GUILayout.Height(40)))
+        else if (GUILayout.Button("Create!", skin.GetStyle("Button"), GUILayout.Height(40)))
         {
             SaveProjectile();
             CloseWindow();
