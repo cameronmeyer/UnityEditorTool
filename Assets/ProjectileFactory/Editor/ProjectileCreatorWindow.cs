@@ -189,7 +189,12 @@ public class ProjectileCreatorWindow : EditorWindow
         string dataPath = "Assets/ProjectileFactory/Resources/ProjectileData/Data/";
 
         // create folders if necessary
-        if(!Directory.Exists(prefabPath))
+        if (!Directory.Exists("Assets/ProjectileFactory/Prefabs/"))
+        {
+            AssetDatabase.CreateFolder("Assets/ProjectileFactory", "Prefabs");
+        }
+
+        if (!Directory.Exists(prefabPath))
         {
             AssetDatabase.CreateFolder("Assets/ProjectileFactory/Prefabs", "Projectiles");
         }
