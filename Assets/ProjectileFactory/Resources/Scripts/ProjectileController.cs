@@ -6,8 +6,6 @@ using UnityEngine;
 public class ProjectileController : MonoBehaviour
 {
     [SerializeField] private float _speed;
-    //private float _damage;
-
     [SerializeField] public ParticleSystem _projectileParticles;
     [SerializeField] AudioClip _projectileFire;
     [SerializeField] public ParticleSystem _impactParticles;
@@ -52,12 +50,6 @@ public class ProjectileController : MonoBehaviour
             Physics.IgnoreCollision(otherProjectile.GetComponent<Collider>(), GetComponent<Collider>());
             return;
         }
-
-        /*IDamageable damageableObj = other.gameObject.GetComponent<IDamageable>();
-        if (damageableObj != null)
-        {
-            damageableObj.Damage(_damage);
-        }*/
 
         ImpactFeedback(Quaternion.LookRotation(other.contacts[0].normal));
 

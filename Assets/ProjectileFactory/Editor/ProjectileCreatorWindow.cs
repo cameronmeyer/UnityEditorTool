@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.IO;
 
 public class ProjectileCreatorWindow : EditorWindow
 {
@@ -24,7 +25,7 @@ public class ProjectileCreatorWindow : EditorWindow
     static void OpenWindow()
     {
         ProjectileCreatorWindow window = (ProjectileCreatorWindow) GetWindow(typeof(ProjectileCreatorWindow));
-        window.minSize = new Vector2(300, 300);
+        window.minSize = new Vector2(350, 300);
         window.titleContent.text = "Projectile Factory";
         window.Show();
     }
@@ -184,9 +185,19 @@ public class ProjectileCreatorWindow : EditorWindow
 
     void SaveProjectile()
     {
-        //string prefabPath; // path to the base prefab
-        string prefabPath = "Assets/Prefabs/Projectiles/";
-        string dataPath = "Assets/Resources/ProjectileData/Data/";
+        string prefabPath = "Assets/ProjectileFactory/Prefabs/Projectiles/";
+        string dataPath = "Assets/ProjectileFactory/Resources/ProjectileData/Data/";
+
+        // create folders if necessary
+        if(!Directory.Exists(prefabPath))
+        {
+            AssetDatabase.CreateFolder("Assets/ProjectileFactory/Prefabs", "Projectiles");
+        }
+
+        if(!Directory.Exists(dataPath))
+        {
+            AssetDatabase.CreateFolder("Assets/ProjectileFactory/Resources/ProjectileData", "Data");
+        }
 
         // create the .asset file
         dataPath += ProjectileInfo.name + ".asset";

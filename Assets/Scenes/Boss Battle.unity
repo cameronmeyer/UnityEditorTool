@@ -1171,7 +1171,7 @@ PrefabInstance:
     - target: {fileID: -4205110558405270071, guid: 319f56a69d173b94381884efb77557e2, type: 3}
       propertyPath: _projectile
       value: 
-      objectReference: {fileID: 111409039444364556, guid: f57a986b3c5d91541974df9bf3ba7d7e, type: 3}
+      objectReference: {fileID: 849910410697149569, guid: 97c4817ad180c40498a81fc5b0d9e867, type: 3}
     - target: {fileID: 712175025, guid: 319f56a69d173b94381884efb77557e2, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.65
